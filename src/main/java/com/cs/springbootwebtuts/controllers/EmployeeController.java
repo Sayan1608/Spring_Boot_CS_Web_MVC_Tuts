@@ -24,5 +24,15 @@ public class EmployeeController {
         return "Name: " + name + ", Age: " + age;
     }
 
+    @PostMapping
+    public String getPostRequestTest(){
+        return "Hi from Post";
+    }
+
+    @PutMapping
+    public String getPutRequestTest(){
+        return "Hi from Put";
+    }
+
 
 }
