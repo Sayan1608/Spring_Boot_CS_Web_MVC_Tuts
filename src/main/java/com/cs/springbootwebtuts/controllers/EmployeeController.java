@@ -34,5 +34,11 @@ public class EmployeeController {
         return "Hi from Put";
     }
 
+    @PostMapping(path = "/create")
+    public EmployeeDto createNewEmployee(@RequestBody EmployeeDto inputEmployee){
+        inputEmployee.setId(123L);
+        return inputEmployee;
+    }
+
 
 }
