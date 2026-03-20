@@ -1,10 +1,7 @@
 package com.cs.springbootwebtuts.controllers;
 
 import com.cs.springbootwebtuts.dto.EmployeeDto;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/employees")
@@ -20,6 +17,11 @@ public class EmployeeController {
         return new
                 EmployeeDto(id, "John Doe", "johndoe@gmail.com", 30,
                 null, true);
+    }
+
+    @GetMapping
+    public String getRequestParamTest(@RequestParam(required = false) String name, @RequestParam(required = false) Integer age){
+        return "Name: " + name + ", Age: " + age;
     }
 
 
