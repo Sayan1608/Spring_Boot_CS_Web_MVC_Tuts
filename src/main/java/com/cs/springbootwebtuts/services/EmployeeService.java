@@ -8,8 +8,11 @@ import org.springframework.data.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class EmployeeService {
@@ -21,9 +24,9 @@ public class EmployeeService {
         this.modelMapper = modelMapper;
     }
 
-    public EmployeeDto findEmployeeById(Long id) {
-        Employee employee = employeeRepository.findById(id).orElse(null);
-        return modelMapper.map(employee, EmployeeDto.class);
+    public Optional<EmployeeDto> findEmployeeById(Long id) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+        return optionalEmployee.map(employee -> modelMapper.map(employee, EmployeeDto.class));
     }
 
     public List<EmployeeDto> findAllEmployees() {
@@ -59,7 +62,8 @@ public class EmployeeService {
         updates.forEach((field, value)->{
             Field requiredField = ReflectionUtils.getRequiredField(Employee.class, field);
             requiredField.setAccessible(true);
-            ReflectionUtils.setField(requiredField, employeeInDb, value);
+            Object converted = convertValueForField(requiredField, value);
+            ReflectionUtils.setField(requiredField, employeeInDb, converted);
         });
         Employee updatedEmployee = employeeRepository.save(employeeInDb);
         return modelMapper.map(updatedEmployee, EmployeeDto.class);
@@ -70,5 +74,47 @@ public class EmployeeService {
         if(!existsEmployeeById) return false;
         employeeRepository.deleteById(id);
         return true;
+    }
+
+    private Object convertValueForField(Field field, Object value) {
+        if (value == null) {
+            return null;
+        }
+        Class<?> target = field.getType();
+
+        // LocalDate handling (expects ISO date string like "2026-03-21")
+        if (LocalDate.class.equals(target)) {
+            if (value instanceof LocalDate) {
+                return value;
+            }
+            String s = value.toString();
+            return LocalDate.parse(s, DateTimeFormatter.ISO_LOCAL_DATE);
+        }
+
+        // Integer / int
+        if (Integer.class.equals(target) || int.class.equals(target)) {
+            if (value instanceof Number) return ((Number) value).intValue();
+            return Integer.valueOf(value.toString());
+        }
+
+        // Long / long
+        if (Long.class.equals(target) || long.class.equals(target)) {
+            if (value instanceof Number) return ((Number) value).longValue();
+            return Long.valueOf(value.toString());
+        }
+
+        // Boolean / boolean
+        if (Boolean.class.equals(target) || boolean.class.equals(target)) {
+            if (value instanceof Boolean) return value;
+            return Boolean.valueOf(value.toString());
+        }
+
+        // String
+        if (String.class.equals(target)) {
+            return value.toString();
+        }
+
+        // fallback: attempt direct assignment
+        return value;
     }
 }

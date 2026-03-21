@@ -3,11 +3,13 @@ package com.cs.springbootwebtuts.controllers;
 import com.cs.springbootwebtuts.dto.EmployeeDto;
 import com.cs.springbootwebtuts.entities.Employee;
 import com.cs.springbootwebtuts.services.EmployeeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/employees")
@@ -19,24 +21,23 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @GetMapping(path = "/test")
-    public String testEmployeeController(){
-        return "Hello Employee Controller";
-    }
-
     @GetMapping(path = "/{employeeId}")
-    public EmployeeDto getEmployee(@PathVariable(name = "employeeId") Long id){
-        return employeeService.findEmployeeById(id);
+    public ResponseEntity<EmployeeDto> getEmployee(@PathVariable(name = "employeeId") Long id){
+        Optional<EmployeeDto> optionalEmployeeDto = employeeService.findEmployeeById(id);
+        return optionalEmployeeDto
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public List<EmployeeDto> getAllEmployees(){
-        return employeeService.findAllEmployees();
+    public ResponseEntity<List<EmployeeDto>> getAllEmployees(){
+        return ResponseEntity.ok(employeeService.findAllEmployees());
     }
 
-    @PostMapping(path = "/create")
-    public EmployeeDto createNewEmployee(@RequestBody Employee inputEmployee){
-        return employeeService.createNewEmployee(inputEmployee);
+    @PostMapping
+    public ResponseEntity<EmployeeDto> createNewEmployee(@RequestBody Employee inputEmployee){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(employeeService.createNewEmployee(inputEmployee)) ;
     }
 
     @PutMapping(path = {"/{employeeId}"})

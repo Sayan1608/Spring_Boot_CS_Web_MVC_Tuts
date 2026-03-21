@@ -1,5 +1,6 @@
 package com.cs.springbootwebtuts.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,5 +25,6 @@ public class Employee {
     private String email;
     private Integer age;
     private LocalDate joiningDate;
+    @JsonProperty("isActive")
     private Boolean isActive;
 }
