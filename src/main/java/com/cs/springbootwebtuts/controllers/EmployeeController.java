@@ -3,6 +3,7 @@ package com.cs.springbootwebtuts.controllers;
 import com.cs.springbootwebtuts.dto.EmployeeDto;
 import com.cs.springbootwebtuts.entities.Employee;
 import com.cs.springbootwebtuts.services.EmployeeService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,16 @@ public class EmployeeController {
     @PostMapping(path = "/create")
     public EmployeeDto createNewEmployee(@RequestBody Employee inputEmployee){
         return employeeService.createNewEmployee(inputEmployee);
+    }
+
+    @PutMapping(path = {"/{employeeId}"})
+    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable(name = "employeeId") Long id,
+                                                     @RequestBody EmployeeDto employeeDto){
+        EmployeeDto updatedEmployee = employeeService.updateEmployee(id, employeeDto);
+        if(updatedEmployee == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedEmployee);
     }
 
 
