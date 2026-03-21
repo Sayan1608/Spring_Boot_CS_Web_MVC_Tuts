@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/employees")
@@ -47,6 +48,27 @@ public class EmployeeController {
         }
         return ResponseEntity.ok(updatedEmployee);
     }
+
+    @PatchMapping(path = "/{employeeId}")
+    public ResponseEntity<EmployeeDto> partiallyUpdateEmployee(@PathVariable(name = "employeeId") Long id,
+                                                              @RequestBody Map<String, Object> updates) {
+        EmployeeDto updatedEmployee = employeeService.partiallyUpdateEmployee(id, updates);
+        if (updatedEmployee == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedEmployee);
+    }
+
+    @DeleteMapping(path = "/{employeeId}")
+    public ResponseEntity<Boolean> deleteEmployee(@PathVariable(name = "employeeId") Long id) {
+        boolean isDeleted = employeeService.deleteEmployeeById(id);
+        if (isDeleted) {
+            return ResponseEntity.ok(Boolean.TRUE);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+
 
 
 }

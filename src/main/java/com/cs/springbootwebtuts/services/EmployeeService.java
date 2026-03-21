@@ -4,10 +4,12 @@ import com.cs.springbootwebtuts.dto.EmployeeDto;
 import com.cs.springbootwebtuts.entities.Employee;
 import com.cs.springbootwebtuts.repositories.EmployeeRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EmployeeService {
@@ -48,5 +50,25 @@ public class EmployeeService {
         employeeInDb.setId(id);
         Employee updatedEmployee = employeeRepository.save(employeeInDb);
         return modelMapper.map(updatedEmployee, EmployeeDto.class);
+    }
+
+    public EmployeeDto partiallyUpdateEmployee(Long id, Map<String, Object> updates) {
+        boolean existsEmployeeById = isExistsEmployeeById(id);
+        if(!existsEmployeeById) return null;
+        Employee employeeInDb = employeeRepository.findById(id).get();
+        updates.forEach((field, value)->{
+            Field requiredField = ReflectionUtils.getRequiredField(Employee.class, field);
+            requiredField.setAccessible(true);
+            ReflectionUtils.setField(requiredField, employeeInDb, value);
+        });
+        Employee updatedEmployee = employeeRepository.save(employeeInDb);
+        return modelMapper.map(updatedEmployee, EmployeeDto.class);
+    }
+
+    public boolean deleteEmployeeById(Long id) {
+        boolean existsEmployeeById = isExistsEmployeeById(id);
+        if(!existsEmployeeById) return false;
+        employeeRepository.deleteById(id);
+        return true;
     }
 }
