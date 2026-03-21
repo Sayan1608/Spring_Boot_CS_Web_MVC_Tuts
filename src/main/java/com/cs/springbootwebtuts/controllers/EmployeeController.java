@@ -1,7 +1,8 @@
 package com.cs.springbootwebtuts.controllers;
 
+import com.cs.springbootwebtuts.dto.EmployeeDto;
 import com.cs.springbootwebtuts.entities.Employee;
-import com.cs.springbootwebtuts.repositories.EmployeeRepository;
+import com.cs.springbootwebtuts.services.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,10 +11,10 @@ import java.util.List;
 @RequestMapping(path = "/employees")
 public class EmployeeController {
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping(path = "/test")
@@ -22,18 +23,18 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/{employeeId}")
-    public Employee getEmployee(@PathVariable(name = "employeeId") Long id){
-        return employeeRepository.findById(id).orElse(null);
+    public EmployeeDto getEmployee(@PathVariable(name = "employeeId") Long id){
+        return employeeService.findEmployeeById(id);
     }
 
     @GetMapping
-    public List<Employee> getAllEmployees(){
-        return employeeRepository.findAll();
+    public List<EmployeeDto> getAllEmployees(){
+        return employeeService.findAllEmployees();
     }
 
     @PostMapping(path = "/create")
-    public Employee createNewEmployee(@RequestBody Employee inputEmployee){
-        return employeeRepository.save(inputEmployee);
+    public EmployeeDto createNewEmployee(@RequestBody Employee inputEmployee){
+        return employeeService.createNewEmployee(inputEmployee);
     }
 
 
