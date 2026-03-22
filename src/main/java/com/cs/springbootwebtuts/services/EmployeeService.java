@@ -2,6 +2,7 @@ package com.cs.springbootwebtuts.services;
 
 import com.cs.springbootwebtuts.dto.EmployeeDto;
 import com.cs.springbootwebtuts.entities.Employee;
+import com.cs.springbootwebtuts.exceptions.ResourceNotFoundException;
 import com.cs.springbootwebtuts.repositories.EmployeeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.ReflectionUtils;
@@ -42,13 +43,13 @@ public class EmployeeService {
         return modelMapper.map(savedEmployee,EmployeeDto.class);
     }
 
-    public boolean isExistsEmployeeById(Long id){
-        return employeeRepository.existsById(id);
+    public void isExistsEmployeeById(Long id){
+        boolean existsById = employeeRepository.existsById(id);
+        if(!existsById) throw new ResourceNotFoundException("Employee with id " + id + " not found");
     }
 
     public EmployeeDto updateEmployee(Long id, EmployeeDto employeeDto) {
-        boolean existsEmployeeById = isExistsEmployeeById(id);
-        if(!existsEmployeeById) return null;
+        isExistsEmployeeById(id);
         Employee employeeInDb = modelMapper.map(employeeDto, Employee.class);
         employeeInDb.setId(id);
         Employee updatedEmployee = employeeRepository.save(employeeInDb);
@@ -56,8 +57,7 @@ public class EmployeeService {
     }
 
     public EmployeeDto partiallyUpdateEmployee(Long id, Map<String, Object> updates) {
-        boolean existsEmployeeById = isExistsEmployeeById(id);
-        if(!existsEmployeeById) return null;
+        isExistsEmployeeById(id);
         Employee employeeInDb = employeeRepository.findById(id).get();
         updates.forEach((field, value)->{
             Field requiredField = ReflectionUtils.getRequiredField(Employee.class, field);
@@ -70,8 +70,7 @@ public class EmployeeService {
     }
 
     public boolean deleteEmployeeById(Long id) {
-        boolean existsEmployeeById = isExistsEmployeeById(id);
-        if(!existsEmployeeById) return false;
+        isExistsEmployeeById(id);
         employeeRepository.deleteById(id);
         return true;
     }

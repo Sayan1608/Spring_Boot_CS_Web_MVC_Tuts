@@ -1,6 +1,7 @@
 package com.cs.springbootwebtuts.controllers;
 
 import com.cs.springbootwebtuts.dto.EmployeeDto;
+import com.cs.springbootwebtuts.exceptions.ResourceNotFoundException;
 import com.cs.springbootwebtuts.services.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class EmployeeController {
         Optional<EmployeeDto> optionalEmployeeDto = employeeService.findEmployeeById(id);
         return optionalEmployeeDto
                 .map(ResponseEntity::ok)
-                .orElseThrow(()-> new NoSuchElementException("Employee with id " + id + " not found"));
+                .orElseThrow(()-> new ResourceNotFoundException("Employee with id " + id + " not found"));
     }
 
     @GetMapping
