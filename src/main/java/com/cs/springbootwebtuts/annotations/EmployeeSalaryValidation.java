@@ -17,5 +17,4 @@ public @interface EmployeeSalaryValidation {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-    String jobLevelField() default "jobLevel";
 }

@@ -35,6 +35,7 @@ public class EmployeeDto {
     @JsonProperty("isActive")
     private Boolean isActive;
 
+    @NotNull(message = "Job level is required")
     @Max(value = 3, message = "Job level cannot be greater than 3")
     @Min(value = 1, message = "Job level cannot be less than 1")
     private Integer jobLevel;

@@ -9,8 +9,6 @@ import java.util.Locale;
 
 public class EmployeeSalaryValidator implements ConstraintValidator<EmployeeSalaryValidation, EmployeeDto> {
 
-    private String jobLevelField;
-
 
     @Override
     public void initialize(EmployeeSalaryValidation constraintAnnotation) {
@@ -32,22 +30,14 @@ public class EmployeeSalaryValidator implements ConstraintValidator<EmployeeSala
         Integer level = toLevel(jobLevelObj);
         if (level == null) return false;
 
-        boolean valid;
-        switch (level) {
-            case 1:
-                valid = salary.compareTo(new BigDecimal("30000")) >= 0
-                        && salary.compareTo(new BigDecimal("60000")) < 0;
-                break;
-            case 2:
-                valid = salary.compareTo(new BigDecimal("60000")) >= 0
-                        && salary.compareTo(new BigDecimal("100000")) < 0;
-                break;
-            case 3:
-                valid = salary.compareTo(new BigDecimal("100000")) >= 0;
-                break;
-            default:
-                valid = false;
-        }
+        boolean valid = switch (level) {
+            case 1 -> salary.compareTo(new BigDecimal("30000")) >= 0
+                    && salary.compareTo(new BigDecimal("60000")) < 0;
+            case 2 -> salary.compareTo(new BigDecimal("60000")) >= 0
+                    && salary.compareTo(new BigDecimal("100000")) < 0;
+            case 3 -> salary.compareTo(new BigDecimal("100000")) >= 0;
+            default -> false;
+        };
 
         if (!valid) {
             context.disableDefaultConstraintViolation();
