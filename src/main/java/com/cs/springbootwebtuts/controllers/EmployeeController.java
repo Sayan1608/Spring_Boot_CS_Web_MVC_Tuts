@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -26,7 +27,7 @@ public class EmployeeController {
         Optional<EmployeeDto> optionalEmployeeDto = employeeService.findEmployeeById(id);
         return optionalEmployeeDto
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(()-> new NoSuchElementException("Employee with id " + id + " not found"));
     }
 
     @GetMapping
@@ -67,6 +68,11 @@ public class EmployeeController {
             return ResponseEntity.ok(Boolean.TRUE);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
 
