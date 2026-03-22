@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -27,4 +28,6 @@ public class Employee {
     private LocalDate joiningDate;
     @JsonProperty("isActive")
     private Boolean isActive;
+    private Integer jobLevel;
+    private BigDecimal salary;
 }

@@ -1,7 +1,6 @@
 package com.cs.springbootwebtuts.controllers;
 
 import com.cs.springbootwebtuts.dto.EmployeeDto;
-import com.cs.springbootwebtuts.entities.Employee;
 import com.cs.springbootwebtuts.services.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
