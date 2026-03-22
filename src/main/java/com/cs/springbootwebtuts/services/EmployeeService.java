@@ -37,8 +37,8 @@ public class EmployeeService {
                 .toList();
     }
 
-    public EmployeeDto createNewEmployee(Employee inputEmployee) {
-        Employee savedEmployee = employeeRepository.save(inputEmployee);
+    public EmployeeDto createNewEmployee(EmployeeDto inputEmployee) {
+        Employee savedEmployee = employeeRepository.save(modelMapper.map(inputEmployee,Employee.class));
         return modelMapper.map(savedEmployee,EmployeeDto.class);
     }
 

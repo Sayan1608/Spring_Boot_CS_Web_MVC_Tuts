@@ -3,6 +3,7 @@ package com.cs.springbootwebtuts.controllers;
 import com.cs.springbootwebtuts.dto.EmployeeDto;
 import com.cs.springbootwebtuts.entities.Employee;
 import com.cs.springbootwebtuts.services.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,14 +36,14 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeDto> createNewEmployee(@RequestBody Employee inputEmployee){
+    public ResponseEntity<EmployeeDto> createNewEmployee(@RequestBody @Valid EmployeeDto inputEmployee){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(employeeService.createNewEmployee(inputEmployee)) ;
     }
 
     @PutMapping(path = {"/{employeeId}"})
     public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable(name = "employeeId") Long id,
-                                                     @RequestBody EmployeeDto employeeDto){
+                                                     @RequestBody @Valid EmployeeDto employeeDto){
         EmployeeDto updatedEmployee = employeeService.updateEmployee(id, employeeDto);
         if(updatedEmployee == null){
             return ResponseEntity.notFound().build();
