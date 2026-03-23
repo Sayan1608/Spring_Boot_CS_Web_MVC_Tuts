@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
                 .subErrors(list)
                 .build();
         ApiResponse<?> apiResponse = buildApiResponseErrorEntity(apiError);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        return ResponseEntity.status(apiError.getStatus()).body(apiResponse);
     }
 
     private ApiResponse<?> buildApiResponseErrorEntity(ApiError apiError) {
